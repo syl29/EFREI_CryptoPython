@@ -13,7 +13,7 @@ def hello_world():
 
 key = Fernet.generate_key()
 f = Fernet(key)
-
+#commit
 @app.route('/encrypt/<string:valeur>')
 def encryptage(valeur):
     valeur_bytes = valeur.encode()  # Conversion str -> bytes
