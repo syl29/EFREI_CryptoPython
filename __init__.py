@@ -1,5 +1,5 @@
 from cryptography.fernet import Fernet
-from flask import Flask, render_template_string, render_template, jsonify, request
+from flask import Flask, render_template_string, render_template, jsonify
 
 app = Flask(__name__)
 
@@ -16,19 +16,14 @@ def encryptage(valeur):
     token = f.encrypt(valeur_bytes)  # Encrypt la valeur
     return f"Valeur encryptée : {token.decode()}"  # Retourne le token en str
 
-# Nouvelle route pour décrypter la valeur fournie par l'utilisateur
-@app.route('/decrypt/', methods=['POST'])
-def decryptage():
-    data = request.get_json()  # Récupère les données envoyées en JSON
-    if 'valeur' not in data:
-        return jsonify({"error": "Champ 'valeur' manquant"}), 400
-
+@app.route('/decrypt/<string:valeur>')
+def decryptage(valeur):
     try:
-        valeur_bytes = data['valeur'].encode()  # Conversion str -> bytes
-        valeur_decryptee = f.decrypt(valeur_bytes).decode()  # Décryptage
-        return jsonify({"valeur_decryptee": valeur_decryptee})
+        valeur_decryptee = f.decrypt(valeur.encode()).decode()  # Décryptage
+        return f"Valeur décryptée : {valeur_decryptee}"  # Retourne la valeur décryptée
     except Exception as e:
-        return jsonify({"error": "Échec du décryptage", "details": str(e)}), 400
+        return f"Erreur lors du décryptage : {str(e)}", 400  # Gestion des erreurs
 
 if __name__ == "__main__":
     app.run(debug=True)
+
